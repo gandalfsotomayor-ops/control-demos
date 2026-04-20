@@ -1,0 +1,1157 @@
+<!DOCTYPE html>
+
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>CONTROL DEMOS</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0c0f;
+    --surface: #111418;
+    --surface2: #181c22;
+    --border: #252a33;
+    --border2: #2f3540;
+    --text: #e8edf5;
+    --text2: #8a95a3;
+    --text3: #4a5568;
+    --green: #00d97e;
+    --green-dim: rgba(0,217,126,0.12);
+    --yellow: #f5c842;
+    --yellow-dim: rgba(245,200,66,0.12);
+    --red: #ff3b5c;
+    --red-dim: rgba(255,59,92,0.12);
+    --accent: #2d6fff;
+    --accent-dim: rgba(45,111,255,0.12);
+    --mono: 'IBM Plex Mono', monospace;
+    --sans: 'IBM Plex Sans', sans-serif;
+    --display: 'Bebas Neue', sans-serif;
+  }
+
+- { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+
+body {
+background: var(–bg);
+color: var(–text);
+font-family: var(–sans);
+max-width: 430px;
+margin: 0 auto;
+min-height: 100vh;
+overflow-x: hidden;
+position: relative;
+}
+
+/* SCREENS */
+.screen { display:none; min-height:100vh; padding-bottom: 80px; }
+.screen.active { display:block; animation: fadeIn 0.18s ease; }
+@keyframes fadeIn { from {opacity:0; transform:translateY(6px)} to {opacity:1; transform:translateY(0)} }
+
+/* TOPBAR */
+.topbar {
+position: sticky; top:0; z-index:100;
+background: rgba(10,12,15,0.95);
+backdrop-filter: blur(12px);
+border-bottom: 1px solid var(–border);
+padding: 14px 18px 12px;
+display: flex; align-items:center; justify-content:space-between;
+}
+.topbar-title {
+font-family: var(–display);
+font-size: 22px; letter-spacing: 1.5px;
+color: var(–text);
+}
+.topbar-sub { font-family:var(–mono); font-size:10px; color:var(–text3); letter-spacing:1px; }
+.topbar-right { display:flex; gap:8px; align-items:center; }
+
+/* NAV BAR */
+.navbar {
+position: fixed; bottom:0; left:50%; transform:translateX(-50%);
+width: 100%; max-width: 430px;
+background: rgba(17,20,24,0.98);
+backdrop-filter: blur(16px);
+border-top: 1px solid var(–border);
+display: flex; z-index:200;
+padding-bottom: env(safe-area-inset-bottom);
+}
+.nav-item {
+flex:1; display:flex; flex-direction:column; align-items:center;
+padding: 10px 4px 8px; cursor:pointer; transition: all 0.15s;
+color: var(–text3); font-family:var(–mono); font-size:9px; letter-spacing:0.5px;
+gap: 4px; border:none; background:none;
+-webkit-appearance:none;
+}
+.nav-item svg { width:20px; height:20px; stroke-width:1.5; }
+.nav-item.active { color: var(–accent); }
+.nav-item.active .nav-icon { color: var(–accent); }
+
+/* BOTONES */
+.btn {
+display: inline-flex; align-items:center; justify-content:center; gap:6px;
+font-family:var(–mono); font-size:12px; font-weight:600; letter-spacing:1.5px;
+padding: 12px 20px; border-radius: 6px; border:none; cursor:pointer;
+transition: all 0.15s; text-transform:uppercase;
+}
+.btn-primary { background: var(–accent); color:#fff; }
+.btn-primary:active { background: #1a55ee; transform:scale(0.97); }
+.btn-ghost {
+background: transparent; color:var(–text2);
+border: 1px solid var(–border2);
+}
+.btn-ghost:active { background: var(–surface2); transform:scale(0.97); }
+.btn-danger { background: var(–red-dim); color:var(–red); border:1px solid rgba(255,59,92,0.25); }
+.btn-success { background: var(–green-dim); color:var(–green); border:1px solid rgba(0,217,126,0.2); }
+.btn-full { width:100%; }
+.btn-sm { padding: 8px 14px; font-size:10px; }
+
+/* STATUS BADGE */
+.badge {
+display:inline-flex; align-items:center; gap:5px;
+font-family:var(–mono); font-size:10px; font-weight:600; letter-spacing:1px;
+padding: 4px 10px; border-radius:4px; text-transform:uppercase;
+}
+.badge-listo { background:var(–green-dim); color:var(–green); border:1px solid rgba(0,217,126,0.2); }
+.badge-riesgo { background:var(–yellow-dim); color:var(–yellow); border:1px solid rgba(245,200,66,0.2); }
+.badge-nolisto { background:var(–red-dim); color:var(–red); border:1px solid rgba(255,59,92,0.25); }
+.badge-prestamo { background:var(–accent-dim); color:var(–accent); border:1px solid rgba(45,111,255,0.2); }
+
+.dot { width:7px; height:7px; border-radius:50%; display:inline-block; }
+.dot-green { background:var(–green); box-shadow:0 0 6px var(–green); }
+.dot-yellow { background:var(–yellow); box-shadow:0 0 6px var(–yellow); }
+.dot-red { background:var(–red); box-shadow:0 0 6px var(–red); }
+.dot-blue { background:var(–accent); }
+
+/* CARDS */
+.card {
+background: var(–surface);
+border: 1px solid var(–border);
+border-radius: 10px; padding: 16px;
+position:relative; overflow:hidden;
+transition: border-color 0.15s;
+}
+.card:active { border-color: var(–border2); }
+.card-listo { border-left: 3px solid var(–green); }
+.card-riesgo { border-left: 3px solid var(–yellow); }
+.card-nolisto { border-left: 3px solid var(–red); }
+
+/* INPUTS */
+.form-group { display:flex; flex-direction:column; gap:6px; }
+.form-label {
+font-family:var(–mono); font-size:10px; color:var(–text2);
+letter-spacing:1.5px; text-transform:uppercase;
+}
+.form-input, .form-select {
+background: var(–surface2); border: 1px solid var(–border2);
+border-radius:6px; padding:12px 14px; color:var(–text);
+font-family:var(–sans); font-size:14px;
+-webkit-appearance:none; appearance:none; outline:none; width:100%;
+transition: border-color 0.15s;
+}
+.form-input:focus, .form-select:focus { border-color:var(–accent); }
+.form-select { background-image: url(“data:image/svg+xml,%3Csvg xmlns=‘http://www.w3.org/2000/svg’ width=‘12’ height=‘12’ viewBox=‘0 0 24 24’ fill=‘none’ stroke=’%238a95a3’ stroke-width=‘2’%3E%3Cpath d=‘M6 9l6 6 6-6’/%3E%3C/svg%3E”); background-repeat:no-repeat; background-position:right 12px center; padding-right:36px; }
+.form-textarea { resize:none; min-height:80px; }
+
+/* DIVIDER */
+.divider { height:1px; background:var(–border); margin:16px 0; }
+
+/* SECTION */
+.section-label {
+font-family:var(–mono); font-size:10px; color:var(–text3);
+letter-spacing:2px; text-transform:uppercase; margin-bottom:10px;
+}
+
+/* STAT ROW */
+.stat-row { display:flex; gap:10px; }
+.stat-box {
+flex:1; background:var(–surface); border:1px solid var(–border);
+border-radius:8px; padding:14px 12px; text-align:center;
+}
+.stat-num { font-family:var(–display); font-size:32px; line-height:1; }
+.stat-label { font-family:var(–mono); font-size:9px; color:var(–text2); letter-spacing:1px; margin-top:4px; }
+
+/* FUEL BAR */
+.fuel-bar-wrap { display:flex; gap:3px; align-items:center; }
+.fuel-seg { height:8px; flex:1; border-radius:2px; background:var(–surface2); border:1px solid var(–border); }
+.fuel-seg.filled { background:var(–green); border-color:var(–green); }
+.fuel-seg.risk { background:var(–yellow); border-color:var(–yellow); }
+.fuel-seg.danger { background:var(–red); border-color:var(–red); }
+
+/* APERTURA CARD */
+.apertura-card {
+background: var(–surface);
+border-radius: 10px;
+overflow:hidden; margin-bottom:10px;
+border: 1px solid var(–border);
+}
+.apertura-header {
+display:flex; align-items:center; justify-content:space-between;
+padding:14px 16px; cursor:pointer;
+}
+.apertura-body { padding: 0 16px 14px; display:none; }
+.apertura-body.open { display:block; }
+
+/* ACCION TAG */
+.accion-tag {
+font-family:var(–mono); font-size:9px; letter-spacing:1px;
+padding:3px 8px; border-radius:3px; text-transform:uppercase;
+}
+.accion-lavado { background:var(–accent-dim); color:var(–accent); }
+.accion-gas { background:var(–yellow-dim); color:var(–yellow); }
+.accion-acomodar { background:rgba(180,120,255,0.12); color:#b478ff; }
+.accion-nada { background:var(–green-dim); color:var(–green); }
+
+/* TOAST */
+.toast {
+position:fixed; bottom:100px; left:50%; transform:translateX(-50%) translateY(20px);
+background:var(–surface2); border:1px solid var(–border2);
+border-radius:8px; padding:12px 20px;
+font-family:var(–mono); font-size:12px; color:var(–text);
+opacity:0; transition:all 0.25s; z-index:999; white-space:nowrap;
+pointer-events:none;
+}
+.toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+
+/* MODAL */
+.modal-overlay {
+display:none; position:fixed; inset:0; background:rgba(0,0,0,0.8);
+z-index:500; align-items:flex-end; justify-content:center;
+}
+.modal-overlay.open { display:flex; animation:fadeIn 0.2s ease; }
+.modal-box {
+background:var(–surface); border:1px solid var(–border2);
+border-radius:16px 16px 0 0; padding:24px 20px 40px;
+width:100%; max-width:430px; max-height:85vh; overflow-y:auto;
+}
+.modal-handle { width:36px; height:4px; border-radius:2px; background:var(–border2); margin:0 auto 20px; }
+
+/* CHIP SELECT */
+.chip-group { display:flex; flex-wrap:wrap; gap:6px; }
+.chip {
+font-family:var(–mono); font-size:11px; letter-spacing:0.5px;
+padding:7px 14px; border-radius:20px; cursor:pointer;
+border:1px solid var(–border2); background:var(–surface2); color:var(–text2);
+transition:all 0.15s; -webkit-appearance:none; white-space:nowrap;
+}
+.chip.selected { background:var(–accent); color:#fff; border-color:var(–accent); }
+.chip.selected-green { background:var(–green); color:#000; border-color:var(–green); }
+.chip.selected-yellow { background:var(–yellow); color:#000; border-color:var(–yellow); }
+.chip.selected-red { background:var(–red); color:#fff; border-color:var(–red); }
+
+/* VIN DISPLAY */
+.vin-display {
+font-family:var(–mono); font-size:18px; font-weight:600;
+letter-spacing:4px; color:var(–accent); background:var(–surface2);
+border:1px solid var(–border2); border-radius:6px;
+padding:10px 16px; display:inline-block;
+}
+
+/* DETAIL ROW */
+.detail-row {
+display:flex; justify-content:space-between; align-items:center;
+padding: 10px 0; border-bottom:1px solid var(–border);
+}
+.detail-row:last-child { border-bottom:none; }
+.detail-key { font-family:var(–mono); font-size:10px; color:var(–text3); letter-spacing:1px; text-transform:uppercase; }
+.detail-val { font-family:var(–sans); font-size:13px; color:var(–text); font-weight:500; }
+
+/* UTILITY */
+.px-18 { padding-left:18px; padding-right:18px; }
+.pt-14 { padding-top:14px; }
+.pb-10 { padding-bottom:10px; }
+.gap-10 { display:flex; flex-direction:column; gap:10px; }
+.gap-14 { display:flex; flex-direction:column; gap:14px; }
+.flex-between { display:flex; justify-content:space-between; align-items:center; }
+.flex-center { display:flex; align-items:center; gap:8px; }
+.text-mono { font-family:var(–mono); }
+.text-xs { font-size:11px; }
+.text-sm { font-size:13px; }
+.text-dim { color:var(–text2); }
+.text-dimmer { color:var(–text3); }
+.bold { font-weight:600; }
+.mt-16 { margin-top:16px; }
+.mt-10 { margin-top:10px; }
+.mb-6 { margin-bottom:6px; }
+.hidden { display:none !important; }
+
+/* ALERT ITEM */
+.alert-item {
+display:flex; gap:12px; align-items:flex-start;
+padding:14px 16px; background:var(–surface);
+border:1px solid var(–border); border-radius:8px;
+}
+.alert-icon { font-size:18px; flex-shrink:0; margin-top:1px; }
+.alert-title { font-family:var(–sans); font-size:13px; font-weight:600; margin-bottom:3px; }
+.alert-sub { font-family:var(–mono); font-size:10px; color:var(–text2); letter-spacing:0.5px; }
+
+/* EMPTY STATE */
+.empty-state {
+display:flex; flex-direction:column; align-items:center; justify-content:center;
+padding:60px 24px; gap:12px; text-align:center;
+}
+.empty-icon { font-size:40px; opacity:0.3; }
+.empty-title { font-family:var(–display); font-size:20px; letter-spacing:1px; color:var(–text2); }
+.empty-sub { font-family:var(–mono); font-size:11px; color:var(–text3); letter-spacing:0.5px; }
+</style>
+
+</head>
+<body>
+
+<!-- SCREEN 1: INICIO -->
+
+<div class="screen active" id="screen-inicio">
+  <div class="topbar">
+    <div>
+      <div class="topbar-title">CONTROL DEMOS</div>
+      <div class="topbar-sub" id="top-fecha">CARGANDO...</div>
+    </div>
+    <button class="btn btn-primary btn-sm" onclick="goScreen('screen-registro')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" style="width:14px;height:14px"><path d="M12 5v14M5 12h14" stroke-linecap="round"/></svg>
+      AGREGAR
+    </button>
+  </div>
+
+  <div class="px-18 pt-14">
+    <div class="stat-row" id="stats-row">
+      <div class="stat-box">
+        <div class="stat-num" id="stat-total" style="color:var(--text)">—</div>
+        <div class="stat-label">UNIDADES</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num" id="stat-listo" style="color:var(--green)">—</div>
+        <div class="stat-label">LISTAS</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num" id="stat-riesgo" style="color:var(--yellow)">—</div>
+        <div class="stat-label">RIESGO</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num" id="stat-nolisto" style="color:var(--red)">—</div>
+        <div class="stat-label">NO LISTAS</div>
+      </div>
+    </div>
+
+```
+<div class="divider"></div>
+
+<!-- APERTURA QUICK BANNER -->
+<div id="apertura-banner" class="card mb-6" style="margin-bottom:14px; cursor:pointer;" onclick="goScreen('screen-apertura')">
+  <div class="flex-between">
+    <div>
+      <div class="section-label" style="margin-bottom:4px">VISTA APERTURA</div>
+      <div id="banner-texto" style="font-family:var(--sans);font-size:14px;font-weight:600;">Ver estado del día</div>
+    </div>
+    <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" style="width:22px;height:22px;flex-shrink:0"><path d="M5 12h14M12 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </div>
+</div>
+
+<div class="section-label">DEMOS ACTIVOS</div>
+<div id="list-inicio" class="gap-10">
+  <div class="empty-state">
+    <div class="empty-icon">🚗</div>
+    <div class="empty-title">SIN UNIDADES</div>
+    <div class="empty-sub">AGREGA TU PRIMERA DEMO</div>
+  </div>
+</div>
+```
+
+  </div>
+</div>
+
+<!-- SCREEN 2: REGISTRO -->
+
+<div class="screen" id="screen-registro">
+  <div class="topbar">
+    <div class="flex-center">
+      <button class="btn btn-ghost btn-sm" onclick="goScreen('screen-inicio')">← VOLVER</button>
+      <div class="topbar-title" style="font-size:18px">NUEVA DEMO</div>
+    </div>
+  </div>
+
+  <div class="px-18 pt-14 gap-14" style="padding-bottom:24px;">
+    <div class="form-group">
+      <div class="form-label">MODELO</div>
+      <div class="chip-group" id="chips-modelo">
+        <button class="chip" onclick="selectChip(this,'modelo','JAC T6 PHEV')">JAC T6 PHEV</button>
+        <button class="chip" onclick="selectChip(this,'modelo','JAC T9 4x2')">JAC T9 4x2</button>
+        <button class="chip" onclick="selectChip(this,'modelo','JAC T9 4x4')">JAC T9 4x4</button>
+        <button class="chip" onclick="selectChip(this,'modelo','JAC 8')">JAC 8</button>
+        <button class="chip" onclick="selectChip(this,'modelo','Otro')">Otro</button>
+      </div>
+    </div>
+
+```
+<div class="form-group">
+  <div class="form-label">COLOR</div>
+  <input class="form-input" type="text" id="input-color" placeholder="Ej: Blanco perla">
+</div>
+
+<div class="form-group">
+  <div class="form-label">VIN — ÚLTIMOS 8 DÍGITOS</div>
+  <input class="form-input text-mono" type="text" id="input-vin" placeholder="XXXXXXXX" maxlength="8" style="letter-spacing:4px;font-size:16px;text-transform:uppercase">
+</div>
+
+<div class="divider"></div>
+<div class="section-label">ESTADO OPERATIVO</div>
+
+<div class="form-group">
+  <div class="form-label">ESTATUS</div>
+  <div class="chip-group" id="chips-estatus">
+    <button class="chip" onclick="selectChip(this,'estatus','Activo')">Activo</button>
+    <button class="chip" onclick="selectChip(this,'estatus','En préstamo')">En préstamo</button>
+    <button class="chip" onclick="selectChip(this,'estatus','Sin stock')">Sin stock</button>
+  </div>
+</div>
+
+<div class="form-group">
+  <div class="form-label">UBICACIÓN</div>
+  <div class="chip-group" id="chips-ubicacion">
+    <button class="chip" onclick="selectChip(this,'ubicacion','Estacionamiento público')">Est. público</button>
+    <button class="chip" onclick="selectChip(this,'ubicacion','Agencia')">Agencia</button>
+    <button class="chip" onclick="selectChip(this,'ubicacion','Taller')">Taller</button>
+    <button class="chip" onclick="selectChip(this,'ubicacion','Cliente')">Cliente</button>
+  </div>
+</div>
+
+<div class="form-group">
+  <div class="form-label">ZONA</div>
+  <div class="chip-group" id="chips-zona">
+    <button class="chip" onclick="selectChip(this,'zona','Entrada')">Entrada</button>
+    <button class="chip" onclick="selectChip(this,'zona','Fila A')">Fila A</button>
+    <button class="chip" onclick="selectChip(this,'zona','Fila B')">Fila B</button>
+    <button class="chip" onclick="selectChip(this,'zona','Fondo')">Fondo</button>
+    <button class="chip" onclick="selectChip(this,'zona','Calle')">Calle</button>
+  </div>
+</div>
+
+<div class="divider"></div>
+<div class="section-label">CONDICIÓN</div>
+
+<div class="form-group">
+  <div class="form-label">GASOLINA</div>
+  <div class="chip-group" id="chips-gasolina">
+    <button class="chip" onclick="selectChip(this,'gasolina','Vacío')">⬜ Vacío</button>
+    <button class="chip" onclick="selectChip(this,'gasolina','1/4')">▪️ 1/4</button>
+    <button class="chip" onclick="selectChip(this,'gasolina','1/2')">◼️ 1/2</button>
+    <button class="chip" onclick="selectChip(this,'gasolina','3/4')">🟩 3/4</button>
+    <button class="chip" onclick="selectChip(this,'gasolina','Lleno')">✅ Lleno</button>
+  </div>
+</div>
+
+<div class="form-group">
+  <div class="form-label">LIMPIEZA</div>
+  <div class="chip-group" id="chips-limpieza">
+    <button class="chip" onclick="selectChip(this,'limpieza','Limpio')">✓ Limpio</button>
+    <button class="chip" onclick="selectChip(this,'limpieza','Sucio')">⚠ Sucio</button>
+    <button class="chip" onclick="selectChip(this,'limpieza','Urgente')">🔴 Urgente</button>
+  </div>
+</div>
+
+<div class="form-group">
+  <div class="form-label">OBSERVACIÓN</div>
+  <textarea class="form-input form-textarea" id="input-obs" placeholder="Notas adicionales (opcional)"></textarea>
+</div>
+
+<button class="btn btn-primary btn-full" onclick="guardarDemo()" style="margin-top:8px">
+  GUARDAR UNIDAD
+</button>
+<button class="btn btn-ghost btn-full" onclick="goScreen('screen-inicio')">
+  CANCELAR
+</button>
+```
+
+  </div>
+</div>
+
+<!-- SCREEN 3: LISTA GENERAL -->
+
+<div class="screen" id="screen-lista">
+  <div class="topbar">
+    <div class="topbar-title">FLOTA</div>
+    <button class="btn btn-primary btn-sm" onclick="goScreen('screen-registro')">+ DEMO</button>
+  </div>
+  <div class="px-18 pt-14">
+    <!-- Filtros -->
+    <div class="chip-group" id="filtros-lista" style="margin-bottom:14px">
+      <button class="chip selected" onclick="filtrarLista(this,'todos')">Todos</button>
+      <button class="chip" onclick="filtrarLista(this,'listo')">✓ Listo</button>
+      <button class="chip" onclick="filtrarLista(this,'riesgo')">⚠ Riesgo</button>
+      <button class="chip" onclick="filtrarLista(this,'nolisto')">✕ No listo</button>
+    </div>
+    <div id="list-flota" class="gap-10"></div>
+  </div>
+</div>
+
+<!-- SCREEN 4: APERTURA -->
+
+<div class="screen" id="screen-apertura">
+  <div class="topbar">
+    <div>
+      <div class="topbar-title">APERTURA</div>
+      <div class="topbar-sub" id="apertura-fecha">—</div>
+    </div>
+    <div id="apertura-resumen-top"></div>
+  </div>
+  <div class="px-18 pt-14">
+    <div id="apertura-list" class="gap-10"></div>
+  </div>
+</div>
+
+<!-- SCREEN 5: DETALLE (dinámico) -->
+
+<div class="screen" id="screen-detalle">
+  <div class="topbar">
+    <button class="btn btn-ghost btn-sm" id="detalle-back" onclick="goBack()">← VOLVER</button>
+    <div class="topbar-right">
+      <button class="btn btn-ghost btn-sm" id="btn-editar-detalle" onclick="editarUnidad()">EDITAR</button>
+    </div>
+  </div>
+  <div class="px-18 pt-14" id="detalle-content"></div>
+</div>
+
+<!-- SCREEN 6: ALERTAS -->
+
+<div class="screen" id="screen-alertas">
+  <div class="topbar">
+    <div class="topbar-title">ALERTAS</div>
+    <div id="alertas-count-badge"></div>
+  </div>
+  <div class="px-18 pt-14 gap-10" id="alertas-list"></div>
+</div>
+
+<!-- NAVBAR -->
+
+<nav class="navbar">
+  <button class="nav-item active" id="nav-inicio" onclick="goNav('inicio')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    INICIO
+  </button>
+  <button class="nav-item" id="nav-flota" onclick="goNav('flota')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="2" y="7" width="20" height="13" rx="2" ry="2"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    FLOTA
+  </button>
+  <button class="nav-item" id="nav-apertura" onclick="goNav('apertura')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2" stroke-linecap="round"/></svg>
+    APERTURA
+  </button>
+  <button class="nav-item" id="nav-alertas" onclick="goNav('alertas')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    ALERTAS
+  </button>
+</nav>
+
+<!-- TOAST -->
+
+<div class="toast" id="toast"></div>
+
+<!-- MODAL EDITAR -->
+
+<div class="modal-overlay" id="modal-editar" onclick="closeModal(event)">
+  <div class="modal-box" onclick="event.stopPropagation()">
+    <div class="modal-handle"></div>
+    <div style="font-family:var(--display);font-size:20px;letter-spacing:1px;margin-bottom:16px">EDITAR UNIDAD</div>
+    <div id="modal-editar-content"></div>
+  </div>
+</div>
+
+<script>
+// ============================================
+// DATA LAYER
+// ============================================
+const DB_KEY = 'control_demos_v1';
+
+function loadDemos() {
+  try { return JSON.parse(localStorage.getItem(DB_KEY) || '[]'); }
+  catch { return []; }
+}
+
+function saveDemos(demos) {
+  localStorage.setItem(DB_KEY, JSON.stringify(demos));
+}
+
+function getDemos() { return loadDemos(); }
+
+// ============================================
+// LÓGICA ESTADO APERTURA
+// ============================================
+function calcEstado(demo) {
+  if (!demo.estatus || demo.estatus === 'Sin stock') return null;
+  const lim = demo.limpieza || '';
+  const gas = demo.gasolina || '';
+  if (lim === 'Urgente' || gas === 'Vacío') return 'nolisto';
+  if (lim === 'Sucio' || gas === '1/4') return 'riesgo';
+  if (lim === 'Limpio' && ['1/2','3/4','Lleno'].includes(gas)) return 'listo';
+  return 'riesgo';
+}
+
+function calcAccion(demo) {
+  const lim = demo.limpieza || '';
+  const gas = demo.gasolina || '';
+  const acciones = [];
+  if (lim === 'Urgente' || lim === 'Sucio') acciones.push('lavado');
+  if (gas === 'Vacío' || gas === '1/4') acciones.push('gas');
+  if (!demo.zona || demo.ubicacion !== 'Estacionamiento público') acciones.push('acomodar');
+  if (acciones.length === 0) return 'nada';
+  return acciones[0];
+}
+
+function estadoLabel(e) {
+  if (e === 'listo') return 'LISTO';
+  if (e === 'riesgo') return 'RIESGO';
+  if (e === 'nolisto') return 'NO LISTO';
+  return '—';
+}
+
+function accionLabel(a) {
+  if (a === 'lavado') return 'MOVER A LAVADO';
+  if (a === 'gas') return 'CARGAR GASOLINA';
+  if (a === 'acomodar') return 'REACOMODAR';
+  return 'SIN ACCIÓN';
+}
+
+function accionClass(a) {
+  if (a === 'lavado') return 'accion-lavado';
+  if (a === 'gas') return 'accion-gas';
+  if (a === 'acomodar') return 'accion-acomodar';
+  return 'accion-nada';
+}
+
+// ============================================
+// FUEL BAR
+// ============================================
+function fuelBar(gas) {
+  const levels = { 'Vacío':0, '1/4':1, '1/2':2, '3/4':3, 'Lleno':4 };
+  const n = levels[gas] ?? 0;
+  let segs = '';
+  for (let i=0;i<4;i++) {
+    let cls = '';
+    if (i < n) {
+      cls = n <= 1 ? 'danger' : n === 2 ? 'risk' : 'filled';
+    }
+    segs += `<div class="fuel-seg ${cls}"></div>`;
+  }
+  return `<div class="fuel-bar-wrap">${segs}</div>`;
+}
+
+// ============================================
+// RENDER CARD
+// ============================================
+function renderCard(demo, clickable=true) {
+  const estado = calcEstado(demo);
+  const accion = calcAccion(demo);
+  const cardClass = estado ? `card-${estado}` : '';
+  const onClick = clickable ? `onclick="abrirDetalle('${demo.id}')"` : '';
+
+  return `
+  <div class="card ${cardClass}" ${onClick} style="${clickable?'cursor:pointer':''}">
+    <div class="flex-between mb-6">
+      <div>
+        <div style="font-family:var(--display);font-size:20px;letter-spacing:1px">${demo.modelo||'—'}</div>
+        <div style="font-family:var(--mono);font-size:11px;color:var(--text2)">${demo.color||''}</div>
+      </div>
+      ${estado ? `<span class="badge badge-${estado}"><span class="dot dot-${estado==='listo'?'green':estado==='riesgo'?'yellow':'red'}"></span>${estadoLabel(estado)}</span>` : `<span class="badge badge-prestamo">PRÉSTAMO</span>`}
+    </div>
+    <div class="flex-between" style="margin-bottom:10px">
+      <div class="vin-display" style="font-size:14px;padding:6px 10px">${demo.vin8||'——————'}</div>
+      <div style="text-align:right">
+        <div class="section-label" style="margin-bottom:3px">GASOLINA</div>
+        ${fuelBar(demo.gasolina)}
+        <div style="font-family:var(--mono);font-size:9px;color:var(--text2);margin-top:3px">${demo.gasolina||'—'}</div>
+      </div>
+    </div>
+    <div class="flex-between">
+      <div style="font-family:var(--mono);font-size:10px;color:var(--text3)">
+        ${demo.ubicacion||'—'} ${demo.zona ? '· '+demo.zona : ''}
+      </div>
+      <span class="accion-tag ${accionClass(accion)}">${accionLabel(accion)}</span>
+    </div>
+  </div>`;
+}
+
+// ============================================
+// NAVIGATION
+// ============================================
+let _prevScreen = 'screen-inicio';
+let _currentScreen = 'screen-inicio';
+
+function goScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  _prevScreen = _currentScreen;
+  _currentScreen = id;
+  refreshScreen(id);
+}
+
+function goBack() {
+  goScreen(_prevScreen);
+}
+
+function goNav(tab) {
+  const map = { inicio:'screen-inicio', flota:'screen-lista', apertura:'screen-apertura', alertas:'screen-alertas' };
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('nav-'+tab)?.classList.add('active');
+  goScreen(map[tab]);
+}
+
+function refreshScreen(id) {
+  if (id === 'screen-inicio') renderInicio();
+  if (id === 'screen-lista') renderLista('todos');
+  if (id === 'screen-apertura') renderApertura();
+  if (id === 'screen-alertas') renderAlertas();
+}
+
+// ============================================
+// SCREEN: INICIO
+// ============================================
+function renderInicio() {
+  const demos = getDemos();
+  const activos = demos.filter(d => d.estatus === 'Activo');
+  const estados = activos.map(calcEstado);
+  const nListo = estados.filter(e=>e==='listo').length;
+  const nRiesgo = estados.filter(e=>e==='riesgo').length;
+  const nNo = estados.filter(e=>e==='nolisto').length;
+
+  document.getElementById('stat-total').textContent = activos.length;
+  document.getElementById('stat-listo').textContent = nListo;
+  document.getElementById('stat-riesgo').textContent = nRiesgo;
+  document.getElementById('stat-nolisto').textContent = nNo;
+
+  // Banner
+  let bannerTxt = '';
+  if (nNo > 0) bannerTxt = `<span style="color:var(--red)">${nNo} unidad${nNo>1?'es':''} NO lista${nNo>1?'s':''} para apertura</span>`;
+  else if (nRiesgo > 0) bannerTxt = `<span style="color:var(--yellow)">${nRiesgo} unidad${nRiesgo>1?'es':''} en riesgo</span>`;
+  else if (activos.length > 0) bannerTxt = `<span style="color:var(--green)">Flota lista para apertura</span>`;
+  else bannerTxt = 'Sin unidades registradas';
+  document.getElementById('banner-texto').innerHTML = bannerTxt;
+
+  // Fecha
+  const now = new Date();
+  document.getElementById('top-fecha').textContent = now.toLocaleDateString('es-MX',{weekday:'long',year:'numeric',month:'long',day:'numeric'}).toUpperCase();
+
+  // Lista
+  const container = document.getElementById('list-inicio');
+  if (activos.length === 0) {
+    container.innerHTML = `<div class="empty-state"><div class="empty-icon">🚗</div><div class="empty-title">SIN UNIDADES</div><div class="empty-sub">AGREGA TU PRIMERA DEMO</div></div>`;
+    return;
+  }
+  // Sort: nolisto first, riesgo second, listo last
+  activos.sort((a,b) => {
+    const order = {nolisto:0,riesgo:1,listo:2};
+    return (order[calcEstado(a)]??3) - (order[calcEstado(b)]??3);
+  });
+  container.innerHTML = activos.map(d => renderCard(d)).join('');
+}
+
+// ============================================
+// SCREEN: LISTA FLOTA
+// ============================================
+let _filtroActivo = 'todos';
+function renderLista(filtro) {
+  _filtroActivo = filtro;
+  const demos = getDemos();
+  const container = document.getElementById('list-flota');
+  let filtered = demos;
+  if (filtro !== 'todos') filtered = demos.filter(d => calcEstado(d) === filtro);
+  if (filtered.length === 0) {
+    container.innerHTML = `<div class="empty-state"><div class="empty-icon">🔍</div><div class="empty-title">SIN RESULTADOS</div><div class="empty-sub">CAMBIA EL FILTRO</div></div>`;
+    return;
+  }
+  filtered.sort((a,b)=>{
+    const order={nolisto:0,riesgo:1,listo:2};
+    return (order[calcEstado(a)]??3)-(order[calcEstado(b)]??3);
+  });
+  container.innerHTML = filtered.map(d=>renderCard(d)).join('');
+}
+
+function filtrarLista(btn, filtro) {
+  document.querySelectorAll('#filtros-lista .chip').forEach(c=>c.classList.remove('selected'));
+  btn.classList.add('selected');
+  renderLista(filtro);
+}
+
+// ============================================
+// SCREEN: APERTURA
+// ============================================
+function renderApertura() {
+  const demos = getDemos().filter(d => d.estatus === 'Activo');
+  const now = new Date();
+  document.getElementById('apertura-fecha').textContent = now.toLocaleDateString('es-MX',{weekday:'long',day:'numeric',month:'long'}).toUpperCase();
+
+  const nNo = demos.filter(d=>calcEstado(d)==='nolisto').length;
+  const nRiesgo = demos.filter(d=>calcEstado(d)==='riesgo').length;
+  let badge = '';
+  if (nNo>0) badge = `<span class="badge badge-nolisto">${nNo} CRÍTICO${nNo>1?'S':''}</span>`;
+  else if (nRiesgo>0) badge = `<span class="badge badge-riesgo">${nRiesgo} RIESGO</span>`;
+  else badge = `<span class="badge badge-listo">TODO LISTO</span>`;
+  document.getElementById('apertura-resumen-top').innerHTML = badge;
+
+  const container = document.getElementById('apertura-list');
+  if (demos.length === 0) {
+    container.innerHTML = `<div class="empty-state"><div class="empty-icon">📋</div><div class="empty-title">SIN DEMOS</div><div class="empty-sub">REGISTRA UNIDADES PRIMERO</div></div>`;
+    return;
+  }
+
+  demos.sort((a,b)=>{
+    const o={nolisto:0,riesgo:1,listo:2};
+    return (o[calcEstado(a)]??3)-(o[calcEstado(b)]??3);
+  });
+
+  container.innerHTML = demos.map(demo => {
+    const estado = calcEstado(demo);
+    const accion = calcAccion(demo);
+    const colors = {listo:'var(--green)',riesgo:'var(--yellow)',nolisto:'var(--red)'};
+    const color = colors[estado]||'var(--text2)';
+    return `
+    <div class="apertura-card" style="border-left:3px solid ${color}">
+      <div class="apertura-header" onclick="toggleApertura(this)">
+        <div class="flex-center">
+          <span class="dot dot-${estado==='listo'?'green':estado==='riesgo'?'yellow':'red'}"></span>
+          <div>
+            <div style="font-family:var(--display);font-size:18px;letter-spacing:1px">${demo.modelo||'—'}</div>
+            <div style="font-family:var(--mono);font-size:10px;color:var(--text2)">${demo.vin8||'—'} · ${demo.color||'—'}</div>
+          </div>
+        </div>
+        <div style="text-align:right">
+          <span class="badge badge-${estado}" style="font-size:9px">${estadoLabel(estado)}</span>
+          <div style="font-family:var(--mono);font-size:9px;color:var(--text3);margin-top:4px">▼</div>
+        </div>
+      </div>
+      <div class="apertura-body">
+        <div class="detail-row">
+          <span class="detail-key">GASOLINA</span>
+          <div style="display:flex;align-items:center;gap:8px">${fuelBar(demo.gasolina)}<span class="detail-val">${demo.gasolina||'—'}</span></div>
+        </div>
+        <div class="detail-row">
+          <span class="detail-key">LIMPIEZA</span>
+          <span class="detail-val" style="color:${demo.limpieza==='Urgente'?'var(--red)':demo.limpieza==='Sucio'?'var(--yellow)':'var(--green)'}">${demo.limpieza||'—'}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-key">ZONA</span>
+          <span class="detail-val">${demo.zona||'—'} · ${demo.ubicacion||'—'}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-key">ACCIÓN</span>
+          <span class="accion-tag ${accionClass(accion)}">${accionLabel(accion)}</span>
+        </div>
+        ${demo.obs ? `<div class="detail-row"><span class="detail-key">OBS</span><span class="detail-val" style="font-size:12px;max-width:60%;text-align:right">${demo.obs}</span></div>` : ''}
+        <button class="btn btn-ghost btn-full btn-sm" style="margin-top:10px" onclick="abrirDetalle('${demo.id}')">VER DETALLE COMPLETO →</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function toggleApertura(header) {
+  const body = header.nextElementSibling;
+  body.classList.toggle('open');
+}
+
+// ============================================
+// SCREEN: DETALLE
+// ============================================
+let _detalleId = null;
+function abrirDetalle(id) {
+  _detalleId = id;
+  const demo = getDemos().find(d=>d.id===id);
+  if (!demo) return;
+  const estado = calcEstado(demo);
+  const accion = calcAccion(demo);
+
+  document.getElementById('detalle-content').innerHTML = `
+    <div style="margin-bottom:20px">
+      <div class="flex-between mb-6">
+        <div>
+          <div style="font-family:var(--display);font-size:28px;letter-spacing:2px">${demo.modelo||'—'}</div>
+          <div style="font-family:var(--sans);font-size:14px;color:var(--text2)">${demo.color||'—'}</div>
+        </div>
+        ${estado ? `<span class="badge badge-${estado}"><span class="dot dot-${estado==='listo'?'green':estado==='riesgo'?'yellow':'red'}"></span>${estadoLabel(estado)}</span>` : ''}
+      </div>
+      <div class="vin-display">${demo.vin8||'——————'}</div>
+    </div>
+
+    <div class="card" style="margin-bottom:14px">
+      <div class="section-label" style="margin-bottom:10px">IDENTIFICACIÓN</div>
+      <div class="detail-row"><span class="detail-key">MODELO</span><span class="detail-val">${demo.modelo||'—'}</span></div>
+      <div class="detail-row"><span class="detail-key">COLOR</span><span class="detail-val">${demo.color||'—'}</span></div>
+      <div class="detail-row"><span class="detail-key">VIN_8</span><span class="detail-val text-mono" style="letter-spacing:2px;color:var(--accent)">${demo.vin8||'—'}</span></div>
+      <div class="detail-row"><span class="detail-key">ESTATUS</span><span class="detail-val">${demo.estatus||'—'}</span></div>
+    </div>
+
+    <div class="card" style="margin-bottom:14px">
+      <div class="section-label" style="margin-bottom:10px">UBICACIÓN</div>
+      <div class="detail-row"><span class="detail-key">LUGAR</span><span class="detail-val">${demo.ubicacion||'—'}</span></div>
+      <div class="detail-row"><span class="detail-key">ZONA</span><span class="detail-val">${demo.zona||'—'}</span></div>
+    </div>
+
+    <div class="card" style="margin-bottom:14px">
+      <div class="section-label" style="margin-bottom:10px">CONDICIÓN</div>
+      <div class="detail-row">
+        <span class="detail-key">GASOLINA</span>
+        <div style="display:flex;align-items:center;gap:10px">${fuelBar(demo.gasolina)}<span class="detail-val">${demo.gasolina||'—'}</span></div>
+      </div>
+      <div class="detail-row">
+        <span class="detail-key">LIMPIEZA</span>
+        <span class="detail-val" style="color:${demo.limpieza==='Urgente'?'var(--red)':demo.limpieza==='Sucio'?'var(--yellow)':'var(--green)'}">${demo.limpieza||'—'}</span>
+      </div>
+      ${demo.obs ? `<div class="detail-row"><span class="detail-key">OBSERVACIÓN</span><span class="detail-val" style="max-width:60%;text-align:right;font-size:12px">${demo.obs}</span></div>` : ''}
+    </div>
+
+    <div class="card" style="margin-bottom:14px; background:var(--surface2)">
+      <div class="section-label" style="margin-bottom:8px">ACCIÓN REQUERIDA</div>
+      <span class="accion-tag ${accionClass(accion)}" style="font-size:12px;padding:6px 14px">${accionLabel(accion)}</span>
+    </div>
+
+    <div style="display:flex;gap:10px;margin-top:6px">
+      <button class="btn btn-primary" style="flex:1" onclick="abrirEditar('${demo.id}')">EDITAR</button>
+      <button class="btn btn-danger" style="flex:1" onclick="confirmarEliminar('${demo.id}')">ELIMINAR</button>
+    </div>
+  `;
+  goScreen('screen-detalle');
+}
+
+// ============================================
+// SCREEN: ALERTAS
+// ============================================
+function renderAlertas() {
+  const demos = getDemos().filter(d=>d.estatus==='Activo');
+  const container = document.getElementById('alertas-list');
+  const alertas = [];
+
+  demos.forEach(d => {
+    const estado = calcEstado(d);
+    const tag = `${d.modelo||'—'} · ${d.vin8||'—'}`;
+    if (d.limpieza === 'Urgente') alertas.push({prioridad:'critica',titulo:tag,sub:'LIMPIEZA URGENTE — Mover a lavado inmediato',icon:'🔴'});
+    if (d.gasolina === 'Vacío') alertas.push({prioridad:'critica',titulo:tag,sub:'SIN GASOLINA — Cargar antes de apertura',icon:'⛽'});
+    if (d.gasolina === '1/4') alertas.push({prioridad:'media',titulo:tag,sub:'GASOLINA BAJA — Riesgo de quedar sin combustible',icon:'⚠️'});
+    if (d.limpieza === 'Sucio') alertas.push({prioridad:'media',titulo:tag,sub:'UNIDAD SUCIA — Requiere limpieza',icon:'🧹'});
+  });
+
+  // Conteo
+  const nc = alertas.filter(a=>a.prioridad==='critica').length;
+  document.getElementById('alertas-count-badge').innerHTML = nc > 0
+    ? `<span class="badge badge-nolisto">${nc} CRÍTICA${nc>1?'S':''}</span>`
+    : `<span class="badge badge-listo">SIN CRÍTICAS</span>`;
+
+  if (alertas.length === 0) {
+    container.innerHTML = `<div class="empty-state"><div class="empty-icon">✅</div><div class="empty-title">SIN ALERTAS</div><div class="empty-sub">TODA LA FLOTA EN ORDEN</div></div>`;
+    return;
+  }
+
+  // Sort criticas first
+  alertas.sort((a,b)=>a.prioridad==='critica'?-1:1);
+  container.innerHTML = alertas.map(a => `
+    <div class="alert-item" style="border-left:3px solid ${a.prioridad==='critica'?'var(--red)':'var(--yellow)'}">
+      <div class="alert-icon">${a.icon}</div>
+      <div>
+        <div class="alert-title">${a.titulo}</div>
+        <div class="alert-sub">${a.sub}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ============================================
+// FORM / REGISTRO
+// ============================================
+const _formState = {};
+
+function selectChip(el, campo, valor) {
+  const group = el.closest('.chip-group');
+  group.querySelectorAll('.chip').forEach(c => {
+    c.classList.remove('selected','selected-green','selected-yellow','selected-red');
+  });
+  _formState[campo] = valor;
+  // Color semántico
+  if (campo === 'gasolina') {
+    if (valor==='Vacío') el.classList.add('selected-red');
+    else if (valor==='1/4') el.classList.add('selected-yellow');
+    else el.classList.add('selected-green');
+  } else if (campo === 'limpieza') {
+    if (valor==='Urgente') el.classList.add('selected-red');
+    else if (valor==='Sucio') el.classList.add('selected-yellow');
+    else el.classList.add('selected-green');
+  } else {
+    el.classList.add('selected');
+  }
+}
+
+function resetForm() {
+  Object.keys(_formState).forEach(k => delete _formState[k]);
+  document.getElementById('input-color').value = '';
+  document.getElementById('input-vin').value = '';
+  document.getElementById('input-obs').value = '';
+  document.querySelectorAll('.chip').forEach(c => c.classList.remove('selected','selected-green','selected-yellow','selected-red'));
+}
+
+function guardarDemo() {
+  const vin = document.getElementById('input-vin').value.trim().toUpperCase();
+  const color = document.getElementById('input-color').value.trim();
+
+  if (!_formState.modelo) { showToast('⚠ Selecciona un modelo'); return; }
+  if (!vin || vin.length < 4) { showToast('⚠ Ingresa mínimo 4 caracteres del VIN'); return; }
+  if (!_formState.gasolina) { showToast('⚠ Indica nivel de gasolina'); return; }
+  if (!_formState.limpieza) { showToast('⚠ Indica estado de limpieza'); return; }
+
+  const demo = {
+    id: Date.now().toString(),
+    modelo: _formState.modelo,
+    color: color || 'Sin especificar',
+    vin8: vin,
+    estatus: _formState.estatus || 'Activo',
+    ubicacion: _formState.ubicacion || 'Agencia',
+    zona: _formState.zona || '',
+    gasolina: _formState.gasolina,
+    limpieza: _formState.limpieza,
+    obs: document.getElementById('input-obs').value.trim(),
+    creado: new Date().toISOString()
+  };
+
+  const demos = getDemos();
+  demos.push(demo);
+  saveDemos(demos);
+  resetForm();
+  showToast('✓ Unidad registrada');
+  goScreen('screen-inicio');
+}
+
+// ============================================
+// EDITAR
+// ============================================
+function editarUnidad() {
+  if (_detalleId) abrirEditar(_detalleId);
+}
+
+function abrirEditar(id) {
+  const demo = getDemos().find(d=>d.id===id);
+  if (!demo) return;
+  _editId = id;
+
+  document.getElementById('modal-editar-content').innerHTML = `
+    <div class="gap-14" style="display:flex;flex-direction:column;gap:14px">
+      <div class="form-group">
+        <div class="form-label">GASOLINA</div>
+        <div class="chip-group">
+          ${['Vacío','1/4','1/2','3/4','Lleno'].map(v=>`<button class="chip ${demo.gasolina===v?(v==='Vacío'?'selected-red':v==='1/4'?'selected-yellow':'selected-green'):''}" onclick="selectChipEdit(this,'gasolina','${v}')">${v}</button>`).join('')}
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="form-label">LIMPIEZA</div>
+        <div class="chip-group">
+          ${['Limpio','Sucio','Urgente'].map(v=>`<button class="chip ${demo.limpieza===v?(v==='Urgente'?'selected-red':v==='Sucio'?'selected-yellow':'selected-green'):''}" onclick="selectChipEdit(this,'limpieza','${v}')">${v}</button>`).join('')}
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="form-label">ZONA</div>
+        <div class="chip-group">
+          ${['Entrada','Fila A','Fila B','Fondo','Calle'].map(v=>`<button class="chip ${demo.zona===v?'selected':''}" onclick="selectChipEdit(this,'zona','${v}')">${v}</button>`).join('')}
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="form-label">UBICACIÓN</div>
+        <div class="chip-group">
+          ${['Estacionamiento público','Agencia','Taller','Cliente'].map(v=>`<button class="chip ${demo.ubicacion===v?'selected':''}" onclick="selectChipEdit(this,'ubicacion','${v}')">${v.replace('Estacionamiento público','Est. público')}</button>`).join('')}
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="form-label">ESTATUS</div>
+        <div class="chip-group">
+          ${['Activo','En préstamo','Sin stock'].map(v=>`<button class="chip ${demo.estatus===v?'selected':''}" onclick="selectChipEdit(this,'estatus','${v}')">${v}</button>`).join('')}
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="form-label">OBSERVACIÓN</div>
+        <textarea class="form-input form-textarea" id="edit-obs" style="min-height:60px">${demo.obs||''}</textarea>
+
+```
+  </div>
+  <button class="btn btn-primary btn-full" onclick="guardarEdicion()">GUARDAR CAMBIOS</button>
+</div>`;
+```
+
+// Pre-load edit state
+_editState = { gasolina:demo.gasolina, limpieza:demo.limpieza, zona:demo.zona, ubicacion:demo.ubicacion, estatus:demo.estatus };
+document.getElementById(‘modal-editar’).classList.add(‘open’);
+}
+
+let _editId = null;
+let _editState = {};
+
+function selectChipEdit(el, campo, valor) {
+const group = el.closest(’.chip-group’);
+group.querySelectorAll(’.chip’).forEach(c=>c.classList.remove(‘selected’,‘selected-green’,‘selected-yellow’,‘selected-red’));
+_editState[campo] = valor;
+if (campo===‘gasolina’) {
+if (valor===‘Vacío’) el.classList.add(‘selected-red’);
+else if (valor===‘1/4’) el.classList.add(‘selected-yellow’);
+else el.classList.add(‘selected-green’);
+} else if (campo===‘limpieza’) {
+if (valor===‘Urgente’) el.classList.add(‘selected-red’);
+else if (valor===‘Sucio’) el.classList.add(‘selected-yellow’);
+else el.classList.add(‘selected-green’);
+} else {
+el.classList.add(‘selected’);
+}
+}
+
+function guardarEdicion() {
+const demos = getDemos();
+const idx = demos.findIndex(d=>d.id===_editId);
+if (idx === -1) return;
+Object.assign(demos[idx], _editState);
+demos[idx].obs = document.getElementById(‘edit-obs’).value.trim();
+saveDemos(demos);
+closeModal();
+showToast(‘✓ Cambios guardados’);
+abrirDetalle(_editId);
+}
+
+function closeModal(e) {
+if (!e || e.target.classList.contains(‘modal-overlay’)) {
+document.getElementById(‘modal-editar’).classList.remove(‘open’);
+}
+}
+
+// ============================================
+// ELIMINAR
+// ============================================
+function confirmarEliminar(id) {
+const demo = getDemos().find(d=>d.id===id);
+if (!demo) return;
+if (confirm(`¿Eliminar ${demo.modelo} (${demo.vin8})?`)) {
+const demos = getDemos().filter(d=>d.id!==id);
+saveDemos(demos);
+showToast(‘Unidad eliminada’);
+goScreen(‘screen-inicio’);
+}
+}
+
+// ============================================
+// TOAST
+// ============================================
+let _toastTimer;
+function showToast(msg) {
+const el = document.getElementById(‘toast’);
+el.textContent = msg;
+el.classList.add(‘show’);
+clearTimeout(_toastTimer);
+_toastTimer = setTimeout(()=>el.classList.remove(‘show’), 2500);
+}
+
+// ============================================
+// INIT
+// ============================================
+window.addEventListener(‘DOMContentLoaded’, () => {
+// Seed demo data if empty
+if (getDemos().length === 0) {
+const seed = [
+{ id:‘1’, modelo:‘JAC T9 4x4’, color:‘Negro’, vin8:‘TM005256’, estatus:‘Activo’, ubicacion:‘Estacionamiento público’, zona:‘Fila A’, gasolina:‘3/4’, limpieza:‘Limpio’, obs:’’, creado: new Date().toISOString() },
+{ id:‘2’, modelo:‘JAC T9 4x2’, color:‘Blanco’, vin8:‘TM004880’, estatus:‘Activo’, ubicacion:‘Estacionamiento público’, zona:‘Fila B’, gasolina:‘1/4’, limpieza:‘Sucio’, obs:‘Lavado pendiente desde ayer’, creado: new Date().toISOString() },
+{ id:‘3’, modelo:‘JAC T6 PHEV’, color:‘Rojo’, vin8:‘TM003411’, estatus:‘Activo’, ubicacion:‘Agencia’, zona:‘Entrada’, gasolina:‘Vacío’, limpieza:‘Urgente’, obs:‘Requiere atención inmediata’, creado: new Date().toISOString() },
+{ id:‘4’, modelo:‘JAC 8’, color:‘Gris plata’, vin8:‘TM006701’, estatus:‘En préstamo’, ubicacion:‘Cliente’, zona:’’, gasolina:‘1/2’, limpieza:‘Limpio’, obs:’’, creado: new Date().toISOString() },
+];
+saveDemos(seed);
+}
+renderInicio();
+});
+</script>
+
+</body>
+</html>
